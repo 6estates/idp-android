@@ -1,4 +1,4 @@
-# idp-android
+# 6Estates idp-android
 
 Android SDK for communicating with the 6Estates Intelligent Document Processing(IDP) Platform.
 
