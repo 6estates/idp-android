@@ -9,3 +9,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "IdpAndroid"
 include ':idp'
+include ':app'
