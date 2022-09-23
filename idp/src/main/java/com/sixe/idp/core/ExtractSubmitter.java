@@ -10,6 +10,7 @@ import com.sixe.idp.network.INetworkObserver;
 import com.sixe.idp.network.INetworkRequest;
 import com.sixe.idp.network.MainRequestApi;
 import com.sixe.idp.network.exception.ExceptionHandle;
+import com.sixe.idp.utils.PreferencesUtil;
 
 import java.io.File;
 import java.util.List;
@@ -25,7 +26,8 @@ public class ExtractSubmitter {
 
     /**
      * Submit images
-     * @param taskInfo Requested object
+     *
+     * @param taskInfo     Requested object
      * @param taskCallback Callback of response
      */
     public static void submitImages(TaskInfo taskInfo, TaskCallback taskCallback) {
@@ -47,8 +49,8 @@ public class ExtractSubmitter {
                     RequestBody.create(MediaType.parse("image/*"), file));
         }
         List<MultipartBody.Part> parts = builder.build().parts();
-
-        MainRequestApi.getService(INetworkRequest.class).multiFileUpload(parts)
+        String projectId = PreferencesUtil.getInstance().getCodeString("projectId", "40");
+        MainRequestApi.getService(INetworkRequest.class).multiFileUpload(projectId, parts)
                 .compose(MainRequestApi.getInstance().applySchedulers(new BaseObserver<>(new INetworkObserver<BaseResponse>() {
                     @Override
                     public void onSuccess(BaseResponse baseResponse) {
@@ -64,7 +66,8 @@ public class ExtractSubmitter {
 
     /**
      * Submit file of PDF
-     * @param taskInfo Requested object
+     *
+     * @param taskInfo     Requested object
      * @param taskCallback Callback of response
      */
     public static void submitPdf(TaskInfo taskInfo, TaskCallback taskCallback) {
@@ -82,8 +85,8 @@ public class ExtractSubmitter {
         RequestBody body = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         builder.addFormDataPart("file", file.getName(), body);
         List<MultipartBody.Part> parts = builder.build().parts();
-
-        MainRequestApi.getService(INetworkRequest.class).imageFileUpload(parts)
+        String projectId = PreferencesUtil.getInstance().getCodeString("projectId", "40");
+        MainRequestApi.getService(INetworkRequest.class).imageFileUpload(projectId, parts)
                 .compose(MainRequestApi.getInstance().applySchedulers(new BaseObserver<>(new INetworkObserver<BaseResponse>() {
                     @Override
                     public void onSuccess(BaseResponse baseResponse) {
