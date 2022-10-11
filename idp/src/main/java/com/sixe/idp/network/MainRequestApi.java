@@ -1,7 +1,5 @@
 package com.sixe.idp.network;
 
-import android.text.TextUtils;
-
 import com.sixe.idp.bean.BaseResponse;
 import com.sixe.idp.network.exception.ExceptionHandle;
 import com.sixe.idp.utils.PreferencesUtil;
@@ -46,12 +44,8 @@ public class MainRequestApi extends BaseNetworkRequestApi {
             @Override
             public Response intercept(Chain chain) throws IOException {
                 Request.Builder builder = chain.request().newBuilder();
-
-                String token = PreferencesUtil.getInstance().getCodeString("token", "");
-                if (!TextUtils.isEmpty(token)) {
-                    builder.addHeader("X-ACCESS-TOKEN", token);
-                }
-
+                builder.addHeader("Authorization",
+                        PreferencesUtil.getInstance().getCodeString("idpAuthorization", ""));
                 return chain.proceed(builder.build());
             }
         };
