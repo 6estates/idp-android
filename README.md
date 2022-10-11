@@ -31,7 +31,7 @@ dependencyResolutionManagement {
 
 ```sh
 dependencies {
-    implementation 'com.sixestates:idp-android:1.0.0'
+    implementation 'com.sixestates:idp-android:1.0.2'
 }
 ```
 
@@ -57,15 +57,33 @@ Note: due to the use of JNI, please do not confuse
 
 A simple use case is shown below:
 
-1. Initialize in application
+1. Get IDP Authorization
+
+You can get Client ID, Client Secret on the IDP Platform. Then register in AndroidManifest.xml.
+   
+```sh
+<application>
+  ...
+  <meta-data
+    android:name="com.sixestates.client.id"
+    android:value="Your Client ID"/>
+
+  <meta-data
+    android:name="com.sixestates.client.secret"
+    android:value="Your Client Secret"/>
+  ...
+</application>
+```
+
+2. Initialize in application
 
 ```sh
 import com.sixe.idplib.Idp;
-// Please obtain your access token from 6Estates in advance
-Idp.init(this,yourAccessToken);
+
+Idp.init(this);
 ```
 
-2. Submit a PDF task
+3. Submit a PDF task
 
 ```sh
 // Path is absolute path of PDF
@@ -77,8 +95,8 @@ TaskInfo taskInfo = new TaskInfo.Builder()
 
 ExtractSubmitter.submitPdf(taskInfo, new TaskCallback() {
     @Override
-    public void success(int id) {
-        // Submit succeed return task id
+    public void success(String response) {
+        // Submit succeed return json string
     }
 
     @Override
@@ -88,7 +106,7 @@ ExtractSubmitter.submitPdf(taskInfo, new TaskCallback() {
 });
 ```
 
-3. Submit multiple pictures task
+4. Submit multiple pictures task
 
 ```sh
 // photosPath is absolute path list of multiple pictures
@@ -99,8 +117,8 @@ TaskInfo taskInfo = new TaskInfo.Builder()
                     .build();
 ExtractSubmitter.submitImages(taskInfo, new TaskCallback() {
     @Override
-    public void success(int id) {
-        // Submit succeed return task id
+    public void success(String response) {
+        // Submit succeed return json string
     }
 
     @Override
@@ -110,7 +128,7 @@ ExtractSubmitter.submitImages(taskInfo, new TaskCallback() {
 });
 ```
 
-4. Query the extraction result with the task id
+5. Query the extraction result with the task id
 
 - get json result
 
@@ -144,7 +162,7 @@ ResultExtractor.getTaskExcel(context,id, new ResultCallback() {
 });
 ```
 
-5. Send Excel of the result by email
+6. Send Excel of the result by email
 
 ```sh
 
@@ -161,7 +179,7 @@ ResultExtractor.sendEmail(context, id, title, email, new ResultCallback() {
 });
 ```
 
-6. Use the image Crop
+7. Use the image Crop
 
 ```sh
 Intent intent = new Intent(UploadActivity.this, CropActivity.class);
@@ -176,7 +194,7 @@ protected void onActivityResult(int requestCode, int resultCode, @Nullable Inten
 }
 ```
 
-7. Use the image Rotate
+8. Use the image Rotate
 
 ```sh
 ImageTools.rotateBitmap(bitmap, angle)
