@@ -3,6 +3,7 @@ package com.sixe.idp;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.util.Base64;
 
 import com.sixe.idp.network.BaseObserver;
@@ -10,7 +11,6 @@ import com.sixe.idp.network.INetworkObserver;
 import com.sixe.idp.network.INetworkRequest;
 import com.sixe.idp.network.MainRequestApi;
 import com.sixe.idp.network.OauthRequestApi;
-import com.sixe.idp.network.exception.ExceptionHandle;
 import com.sixe.idp.utils.PreferencesUtil;
 
 import org.json.JSONException;
@@ -31,22 +31,24 @@ public class Idp {
      * Initialize the Idp environment
      *
      * @param context context
-     * @param token   auth token for the account
      */
-    public static synchronized void init(Context context, String token) {
+    public static synchronized void init(Context context) {
         SmartCropper.buildImageDetector(context);
         PreferencesUtil.init(context);
         try {
             // get id and secret from AndroidManifest.xml
             ApplicationInfo applicationInfo = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
-            String id = applicationInfo.metaData.getString("com.sixestates.client.id");
-            String secret = applicationInfo.metaData.getString("com.sixestates.client.secret");
-            String combination = id + ":" + secret;
-            // get oauth authorization
-            String oauthAuthorization = Base64.encodeToString(combination.getBytes(), Base64.DEFAULT);
-            PreferencesUtil.getInstance().putCodeString("oauthAuthorization", oauthAuthorization);
-            // get idp authorization
-            getIdpAuthorization();
+            Bundle metaData = applicationInfo.metaData;
+            if (metaData != null) {
+                String id = applicationInfo.metaData.getString("com.sixestates.client.id");
+                String secret = applicationInfo.metaData.getString("com.sixestates.client.secret");
+                String combination = id + ":" + secret;
+                // get oauth authorization
+                String oauthAuthorization = Base64.encodeToString(combination.getBytes(), Base64.DEFAULT).replaceAll("\r|\n", "");
+                PreferencesUtil.getInstance().putCodeString("oauthAuthorization", oauthAuthorization);
+                // get idp authorization
+                getIdpAuthorization();
+            }
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -55,7 +57,7 @@ public class Idp {
     /**
      * Get IDP Authorization
      */
-    private static void getIdpAuthorization(){
+    private static void getIdpAuthorization() {
         OauthRequestApi.getService(INetworkRequest.class).getIdpAuthorization()
                 .compose(OauthRequestApi.getInstance().applySchedulers(new BaseObserver<>(new INetworkObserver<ResponseBody>() {
                     @Override
@@ -84,7 +86,7 @@ public class Idp {
     /**
      * Get Project ID
      */
-    private static void getProjectId(){
+    private static void getProjectId() {
         MainRequestApi.getService(INetworkRequest.class).getProjectId()
                 .compose(MainRequestApi.getInstance().applySchedulers(new BaseObserver<>(new INetworkObserver<ResponseBody>() {
                     @Override
@@ -95,7 +97,7 @@ public class Idp {
                             String projectId = jsonObject.getString("data");
                             // save project id to SP
                             PreferencesUtil.getInstance().putCodeString("projectId", projectId);
-                        } catch (IOException  | JSONException e) {
+                        } catch (IOException | JSONException e) {
                             e.printStackTrace();
                         }
 

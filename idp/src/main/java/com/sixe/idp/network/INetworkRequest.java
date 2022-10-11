@@ -25,14 +25,14 @@ public interface INetworkRequest {
      */
     @Multipart
     @POST("api/extraction/fields/async/{projectId}")
-    Observable<BaseResponse> imageFileUpload(@Path("projectId") String projectId, @Part List<MultipartBody.Part> partList);
+    Observable<ResponseBody> imageFileUpload(@Path("projectId") String projectId, @Part List<MultipartBody.Part> partList);
 
     /**
      * Multi picture upload interface with parameters
      */
     @Multipart
     @POST("api/extraction/fields/async/multi_image/{projectId}")
-    Observable<BaseResponse> multiFileUpload(@Path("projectId") String projectId, @Part List<MultipartBody.Part> partList);
+    Observable<ResponseBody> multiFileUpload(@Path("projectId") String projectId, @Part List<MultipartBody.Part> partList);
 
     /**
      * Get task results
@@ -62,7 +62,7 @@ public interface INetworkRequest {
     /**
      * task list
      */
-    @GET("api/ext/history/self_list")
+    @GET("api/extraction/history/self_list")
     Observable<ResponseBody> getTaskList(@QueryMap Map<String, Object> param);
 
     /**

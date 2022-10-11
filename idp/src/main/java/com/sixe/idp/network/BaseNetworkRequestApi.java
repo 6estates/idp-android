@@ -1,6 +1,7 @@
 package com.sixe.idp.network;
 
 import com.sixe.idp.network.exception.HttpErrorHandler;
+
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observable;

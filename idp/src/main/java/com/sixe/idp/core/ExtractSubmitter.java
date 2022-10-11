@@ -3,7 +3,6 @@ package com.sixe.idp.core;
 import android.os.Build;
 import android.os.Environment;
 
-import com.sixe.idp.bean.BaseResponse;
 import com.sixe.idp.bean.TaskInfo;
 import com.sixe.idp.network.BaseObserver;
 import com.sixe.idp.network.INetworkObserver;
@@ -13,11 +12,13 @@ import com.sixe.idp.network.exception.ExceptionHandle;
 import com.sixe.idp.utils.PreferencesUtil;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 
 /**
  * Use to submit
@@ -51,10 +52,16 @@ public class ExtractSubmitter {
         List<MultipartBody.Part> parts = builder.build().parts();
         String projectId = PreferencesUtil.getInstance().getCodeString("projectId", "40");
         MainRequestApi.getService(INetworkRequest.class).multiFileUpload(projectId, parts)
-                .compose(MainRequestApi.getInstance().applySchedulers(new BaseObserver<>(new INetworkObserver<BaseResponse>() {
+                .compose(MainRequestApi.getInstance().applySchedulers(new BaseObserver<>(new INetworkObserver<ResponseBody>() {
                     @Override
-                    public void onSuccess(BaseResponse baseResponse) {
-                        taskCallback.success(baseResponse.getData());
+                    public void onSuccess(ResponseBody baseResponse) {
+                        try {
+                            String response = baseResponse.string();
+                            taskCallback.success(response);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            taskCallback.success(e.getMessage());
+                        }
                     }
 
                     @Override
@@ -87,10 +94,16 @@ public class ExtractSubmitter {
         List<MultipartBody.Part> parts = builder.build().parts();
         String projectId = PreferencesUtil.getInstance().getCodeString("projectId", "40");
         MainRequestApi.getService(INetworkRequest.class).imageFileUpload(projectId, parts)
-                .compose(MainRequestApi.getInstance().applySchedulers(new BaseObserver<>(new INetworkObserver<BaseResponse>() {
+                .compose(MainRequestApi.getInstance().applySchedulers(new BaseObserver<>(new INetworkObserver<ResponseBody>() {
                     @Override
-                    public void onSuccess(BaseResponse baseResponse) {
-                        taskCallback.success(baseResponse.getData());
+                    public void onSuccess(ResponseBody baseResponse) {
+                        try {
+                            String response = baseResponse.string();
+                            taskCallback.success(response);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            taskCallback.success(e.getMessage());
+                        }
                     }
 
                     @Override

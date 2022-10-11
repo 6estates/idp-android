@@ -6,9 +6,9 @@ package com.sixe.idp.core;
 public interface TaskCallback {
     /**
      * Submit success
-     * @param id task id
+     * @param response response
      */
-    void success(int id);
+    void success(String response);
 
     /**
      * Submit fail
